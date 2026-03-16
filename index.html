@@ -25,27 +25,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--bg);
+            background-color: #0a0a0a;
             color: var(--text);
             font-family: var(--font);
-            height: 100vh;
+            margin: 0;
             display: flex;
             flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
 
         /* ── TOP NAV ── */
         nav {
-            height: 54px;
-            background: var(--nav-bg);
-            border-bottom: 1px solid var(--border);
+            background: #0a0a0a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
+            justify-content: space-between;
             align-items: center;
             padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            height: 50px;
             flex-shrink: 0;
+            z-index: 100;
         }
         .brand {
             color: var(--amber);
@@ -84,10 +84,8 @@
             height: 100%;
             width: 100%;
             padding: 14px;
-            animation: fadeIn 0.25s ease;
         }
         .tab-content.active { display: flex; flex-direction: column; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ── 2×2 GRID (HOME) ── */
         .home-grid {
@@ -99,21 +97,24 @@
             min-height: 0;
         }
         .quadrant {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 4px;
+            background: #0d0d0d;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            /* Allow user to resize quadrant */
             resize: both;
             min-width: 220px;
             min-height: 160px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        .quadrant:hover {
+            border-color: rgba(0, 209, 255, 0.2);
         }
         .quad-header {
             padding: 8px 12px;
-            background: #0d0d0d;
-            border-bottom: 1px solid var(--border);
+            background: #111111;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             color: var(--amber);
             font-size: 0.72rem;
             font-weight: 700;
@@ -121,6 +122,7 @@
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
+            letter-spacing: 0.5px;
         }
         .quad-body {
             flex-grow: 1;
@@ -137,15 +139,14 @@
             min-height: 0;
         }
 
-        /* Scrollable list — 4 items visible */
+        /* Scrollable list — expands to fill parent */
         .commodity-list {
             width: 130px;
             flex-shrink: 0;
             overflow-y: auto;
             border-right: 1px solid var(--border);
+            height: 100%;
         }
-        /* show exactly 4 items; each item 36px */
-        .commodity-list { max-height: calc(4 * 36px); height: 100%; }
 
         .commodity-item {
             padding: 9px 12px;
@@ -201,27 +202,172 @@
         #barometer-canvas { width: 100% !important; height: 100% !important; }
 
         /* ── SIMPLE METRICS ── */
-        .metric-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid #111;
-        }
-        .metric-label { color: #777; }
+        .metric-label { color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .up   { color: var(--green); }
         .down { color: var(--red); }
         .flash { color: var(--green); font-size: 0.65rem; }
 
+        .metric-row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-family: 'Roboto Mono', monospace;
+            gap: 15px;
+            white-space: nowrap;
+        }
+        .impact-controls { padding: 10px; border-bottom: 1px solid #111; }
+        #macro-event-select {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            color: var(--amber);
+            font-family: var(--font);
+            font-size: 0.75rem;
+            padding: 5px;
+            outline: none;
+        }
+        .impact-metrics { padding: 10px; flex-grow: 1; overflow-y: auto; }
+        .impact-card {
+            background: #0a0a0a;
+            border-left: 2px solid var(--border);
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+        .impact-row { display: flex; justify-content: space-between; font-size: 0.72rem; margin-top: 4px; }
+        .impact-asset { color: var(--blue); font-weight: bold; margin-bottom: 4px; display: block; }
+
         /* ── NEWS FEED ── */
         .quad-body .news-wrap { overflow-y: auto; flex-grow: 1; }
+        /* ── Q4 REDESIGN: 2-COLUMN LAYOUT ── */
+        .q4-layout {
+            display: flex;
+            height: 100%;
+            overflow: hidden;
+        }
+        .q4-left {
+            width: 65%;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        .q4-right {
+            flex-grow: 1;
+            width: 35%;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .today-reset-btn {
+            background: transparent;
+            color: #ff8c00;
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #ff8c00;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
+            box-shadow: inset 0 0 10px rgba(255, 140, 0, 0.1);
+        }
+        .today-reset-btn:hover { 
+            background: rgba(255, 140, 0, 0.1); 
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3), inset 0 0 15px rgba(255, 140, 0, 0.2);
+            color: #ffaa44;
+        }
+
+        .event-scroll-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 0 8px 8px 8px;
+        }
+        .event-btn {
+            padding: 8px 10px;
+            font-size: 0.9rem;
+            color: #ccc;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid transparent;
+        }
+        .event-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .event-btn.active { 
+            background: rgba(255, 140, 0, 0.1); 
+            color: #ff8c00; 
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-left: 3px solid #ff8c00;
+        }
+
         .news-item {
             padding: 7px 12px;
             border-bottom: 1px solid #111;
             font-size: 0.78rem;
             line-height: 1.4;
+            display: flex;
+            align-items: flex-start;
         }
-        .news-time { color: #555; margin-right: 8px; }
+        .news-item a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+        .news-item a:hover {
+            color: var(--blue);
+        }
+        .news-time {
+            color: #555;
+            margin-right: 8px;
+            font-family: var(--font);
+            font-size: 0.7rem;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        /* ── CUSTOM SCROLLBAR (Neon Green) ── */
+        .news-wrap::-webkit-scrollbar, .impact-metrics::-webkit-scrollbar, #sector-flow-container::-webkit-scrollbar { width: 4px; }
+        .news-wrap::-webkit-scrollbar-track, .impact-metrics::-webkit-scrollbar-track, #sector-flow-container::-webkit-scrollbar-track { background: transparent; }
+        .news-wrap::-webkit-scrollbar-thumb, .impact-metrics::-webkit-scrollbar-thumb, #sector-flow-container::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .news-wrap::-webkit-scrollbar-thumb:hover, .impact-metrics::-webkit-scrollbar-thumb:hover, #sector-flow-container::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+
+        /* ── NO ANIMATIONS ── */
+        .news-item, .metric-row, .impact-card {
+            opacity: 1;
+        }
+
+        /* ── WINNER LOSER HIGHLIGHT ── */
+        .wl-container { display: flex; flex-direction: row; gap: 8px; padding: 0; height: 100%; align-items: stretch; }
+        .wl-box { 
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .wl-label { font-size: 0.6rem; color: #666; font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+        .wl-name { font-size: 0.85rem; font-weight: bold; display: block; }
+        .wl-stats { font-size: 0.7rem; font-family: 'Roboto Mono'; margin-top: 4px; display: block; }
+        .wl-box.winner { border-left: 3px solid var(--green); }
+        .wl-box.loser { border-left: 3px solid var(--red); }
 
         /* ── PLACEHOLDER ── */
         .placeholder {
@@ -320,14 +466,8 @@
                     <span class="flash">● LIVE</span>
                 </div>
                 <div class="quad-body">
-                    <div class="news-wrap">
-                        <div class="news-item"><span class="news-time">14:22</span>FED SIGNALS PERSISTENT RATES AMID STICKY INFLATION DATA</div>
-                        <div class="news-item"><span class="news-time">14:15</span>OIL SURGES AS GEOPOLITICAL TENSIONS ESCALATE IN MIDDLE EAST</div>
-                        <div class="news-item"><span class="news-time">13:58</span>APPLE (AAPL) REPORTS SURGE IN SERVICES REVENUE — Q1 BEAT</div>
-                        <div class="news-item"><span class="news-time">13:42</span>S&P 500 FUTURES TRADE FLAT AHEAD OF OPEN; NASDAQ -0.2%</div>
-                        <div class="news-item"><span class="news-time">13:30</span>ECB HOLDS RATES STEADY — LAGARDE SIGNALS SUMMER CUT</div>
-                        <div class="news-item"><span class="news-time">13:10</span>GOLD BREAKS $2,150 AS RISK-OFF SENTIMENT INTENSIFIES</div>
-                        <p class="placeholder">[ REAL-TIME SCROLLING HEADLINES — IN DEVELOPMENT ]</p>
+                    <div class="news-wrap" id="global-news-feed" style="overflow: hidden; padding-top: 0;">
+                        <div class="news-item" style="margin-top: 0;">Loading live headlines...</div>
                     </div>
                 </div>
             </div>
@@ -354,6 +494,7 @@
                                 <button class="baro-tf-btn tf-btn" id="baro-tf-YTD" onclick="setBarometerTimeframe('YTD')">YTD</button>
                                 <button class="baro-tf-btn tf-btn active" id="baro-tf-1Y" onclick="setBarometerTimeframe('1Y')">1Y</button>
                                 <button class="baro-tf-btn tf-btn" id="baro-tf-5Y"  onclick="setBarometerTimeframe('5Y')">5Y</button>
+                                <button class="baro-tf-btn tf-btn" id="baro-tf-MAX" onclick="setBarometerTimeframe('MAX')">MAX</button>
                             </div>
                             <div class="barometer-canvas-wrap">
                                 <canvas id="barometer-canvas"></canvas>
@@ -366,7 +507,7 @@
             <!-- BOTTOM-LEFT: Sector Capital Flow -->
             <div class="quadrant">
                 <div class="quad-header"><span>SECTOR CAPITAL FLOW</span></div>
-                <div class="quad-body" style="overflow-y:auto;">
+                <div class="quad-body" id="sector-flow-container" style="overflow-y:auto;">
                     <div class="metric-row"><span class="metric-label">TECHNOLOGY</span><span class="up">+1.45%</span></div>
                     <div class="metric-row"><span class="metric-label">ENERGY</span><span class="down">-0.82%</span></div>
                     <div class="metric-row"><span class="metric-label">FINANCIALS</span><span class="up">+0.12%</span></div>
@@ -379,18 +520,21 @@
                 </div>
             </div>
 
-            <!-- BOTTOM-RIGHT: Macro Catalyst Calendar -->
+            <!-- BOTTOM-RIGHT: Historical Impact Engine -->
             <div class="quadrant">
-                <div class="quad-header"><span>MACRO CATALYST CALENDAR</span></div>
-                <div class="quad-body" style="overflow-y:auto;">
-                    <div class="metric-row"><span class="metric-label">MAR 15</span><span style="color:var(--amber)">US PPI (MoM)</span></div>
-                    <div class="metric-row"><span class="metric-label">MAR 20</span><span style="color:var(--red)">FOMC RATE DECISION ★</span></div>
-                    <div class="metric-row"><span class="metric-label">MAR 22</span><span>US INITIAL JOBLESS CLAIMS</span></div>
-                    <div class="metric-row"><span class="metric-label">MAR 27</span><span>UK GDP (Q4 Final)</span></div>
-                    <div class="metric-row"><span class="metric-label">APR 02</span><span>ISM MANUFACTURING PMI</span></div>
-                    <div class="metric-row"><span class="metric-label">APR 05</span><span style="color:var(--amber)">NON-FARM PAYROLLS ★</span></div>
-                    <div class="metric-row"><span class="metric-label">APR 10</span><span>US CPI (MoM)</span></div>
-                    <p class="placeholder">[ LIVE ECONOMIC CALENDAR — IN DEVELOPMENT ]</p>
+                <div class="quad-header"><span>HISTORICAL IMPACT ENGINE</span></div>
+                <div class="quad-body">
+                    <div class="q4-layout">
+                        <div class="q4-left">
+                            <div id="today-btn" class="today-reset-btn" onclick="resetToToday()">TODAY'S MARKET</div>
+                            <div class="event-scroll-list" id="event-list-container">
+                                <!-- Event buttons injected here -->
+                            </div>
+                        </div>
+                        <div class="q4-right" id="impact-metrics-container">
+                            <p class="placeholder" style="margin-top:20px;">SELECT EVENT TO ANALYZE IMPACT</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -401,8 +545,15 @@
          TAB 2: MACRO & GEOPOLITICS
     ════════════════════════════════════════ -->
     <div id="macro" class="tab-content ph-tab">
-        <h2>MACRO & GEOPOLITICS</h2>
-        <div class="ph-box">[ EXTENDED MACRO DATA &amp; NEWS SENTIMENT ANALYSIS — IN DEVELOPMENT ]</div>
+        <div class="master-section">
+            <div class="quad-header" style="margin-bottom:12px;">
+                <span>MACRO & GEOPOLITICS — GLOBAL INTELLIGENCE</span>
+                <span class="flash">● LIVE FEED</span>
+            </div>
+            <div class="news-wrap" id="macro-news-full" style="border: 1px solid var(--border); background: #080808; border-radius: 4px; overflow-y: auto; height: 600px;">
+                <div class="news-item">Loading macro intelligence...</div>
+            </div>
+        </div>
     </div>
 
     <!-- ════════════════════════════════════════
@@ -437,6 +588,7 @@
                 <button class="master-tf-btn tf-btn" id="master-tf-YTD" onclick="setMasterTimeframe('YTD')">YTD</button>
                 <button class="master-tf-btn tf-btn" id="master-tf-1Y"  onclick="setMasterTimeframe('1Y')">1Y</button>
                 <button class="master-tf-btn tf-btn active" id="master-tf-5Y" onclick="setMasterTimeframe('5Y')">5Y</button>
+                <button class="master-tf-btn tf-btn" id="master-tf-MAX" onclick="setMasterTimeframe('MAX')">MAX</button>
             </div>
             <!-- Multi-select checkboxes -->
             <div id="master-checkboxes">

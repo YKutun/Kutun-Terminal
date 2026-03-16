@@ -29,7 +29,7 @@ def track_commodities():
     }
     
     tickers = list(commodity_map.values())
-    start_date = "2020-01-01"
+    start_date = "2005-01-01"
     end_date = datetime.now().strftime('%Y-%m-%d')
     
     print(f"Fetching data for {len(tickers)} commodities from {start_date} to {end_date}...")

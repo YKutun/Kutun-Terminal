@@ -11,40 +11,92 @@ let activeBarometerTimeframe = '1Y';
 
 // Master chart (FX tab) timeframe state
 let activeMasterTimeframe = '5Y';
+let activeCustomRange = null; // { start: Date, end: Date } for event snapping
+
+// Data stores
+let macroEvents = [];
+let sectorData = {};
+let activeEventIdx = null; // Track currently selected historical event
+
+// Sector Mapping Dictionary
+const SECTOR_MAP = {
+    'XLK': 'TECHNOLOGY (XLK)', 'XLE': 'ENERGY (XLE)', 'XLF': 'FINANCIALS (XLF)', 
+    'XLV': 'HEALTHCARE (XLV)', 'XLY': 'CONS. DISC. (XLY)', 'XLI': 'INDUSTRIALS (XLI)', 
+    'XLB': 'MATERIALS (XLB)', 'XLU': 'UTILITIES (XLU)', 'XLP': 'CONS. STAPLES (XLP)', 
+    'XLRE': 'REAL ESTATE (XLRE)', 'XLC': 'COMM. SVCS (XLC)'
+};
 
 // Chart instances (kept so we can destroy and re-create cleanly)
 let barometerChart = null;
 let masterChart = null;
 
 // ============================================================
-// 1. DATA LOADING — Fetch commodities_data.json at startup
+/// ============================================================
+// 1. INITIALIZATION — Linear boot sequence
 // ============================================================
-async function loadCommodityData() {
+async function initTerminal() {
     try {
-        const response = await fetch('commodities_data.json');
-        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
-        commodityData = await response.json();
-        console.log(`Loaded ${Object.keys(commodityData).length} commodities.`);
+        console.log("Initializing Terminal Engine...");
+        
+        // 1. Fetch all static data safely
+        const fetchSafe = async (url, defaultData) => {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                return await res.json();
+            } catch (e) {
+                console.warn(`Failed to safely load ${url}:`, e);
+                return defaultData;
+            }
+        };
 
-        // Populate UI elements once data is loaded
+        const [commodRes, eventRes, sectorRes, newsRes] = await Promise.all([
+            fetchSafe('commodities_data.json', {}),
+            fetchSafe('macro_events.json', []),
+            fetchSafe('sector_historical.json', {}),
+            fetchSafe('live_news.json', [])
+        ]);
+
+        // 2. Apply Data
+        commodityData = commodRes;
+        macroEvents = eventRes;
+        sectorData = sectorRes;
+        const newsData = newsRes;
+
+        // 3. Build UI components (Stateless/Data-driven)
         buildBarometerList();
         buildMasterCheckboxes();
+        renderLiveNews(newsData);
+        buildMacroEventList();
 
-        // Auto-select the first commodity for the barometer
+        // 4. Set Initial State (Today's Market)
+        resetToToday();
+
+        // 5. Default selection
         const firstTicker = Object.keys(commodityData)[0];
         if (firstTicker) selectBarometerCommodity(firstTicker);
 
+        console.log("Terminal initialized successfully.");
     } catch (err) {
-        console.error('Failed to load commodities_data.json:', err);
-        document.getElementById('barometer-list').innerHTML =
-            '<p style="color:#ff4c4c;padding:10px;">Error: Could not load data.<br>Run: <b>py -m http.server 8080</b></p>';
+        console.error('Terminal Initialization Failed (Fatal):', err);
     }
 }
-
 // ============================================================
 // 2. UTILITY — Slice data arrays by timeframe
 // ============================================================
 function sliceByTimeframe(labels, prices, timeframe) {
+    if (activeCustomRange) {
+        const { start, end } = activeCustomRange;
+        const startIdx = labels.findIndex(d => new Date(d) >= start);
+        const endIdx = labels.findLastIndex(d => new Date(d) <= end);
+        if (startIdx === -1) return { labels: [], prices: [] };
+        const safeEnd = endIdx === -1 ? labels.length : endIdx + 1;
+        return {
+            labels: labels.slice(startIdx, safeEnd),
+            prices: prices.slice(startIdx, safeEnd)
+        };
+    }
+
     const now = new Date();
     let cutoff;
 
@@ -55,7 +107,8 @@ function sliceByTimeframe(labels, prices, timeframe) {
         case '6M': cutoff = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate()); break;
         case 'YTD': cutoff = new Date(now.getFullYear(), 0, 1); break;
         case '1Y': cutoff = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()); break;
-        case '5Y':
+        case '5Y': cutoff = new Date(now.getFullYear() - 5, now.getMonth(), now.getDate()); break;
+        case 'MAX': cutoff = new Date('2005-01-01'); break;
         default: cutoff = new Date(now.getFullYear() - 5, now.getMonth(), now.getDate()); break;
     }
 
@@ -107,10 +160,8 @@ function setBarometerTimeframe(tf) {
 function setMasterTimeframe(tf) {
     activeMasterTimeframe = tf;
 
-    // Update master timeframe button styles (prefixed master-tf-)
-    document.querySelectorAll('.master-tf-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`master-tf-${tf}`).classList.add('active');
-
+    // Clear active custom range when switching timeframe buttons
+    activeCustomRange = null;
     updateMasterChart();
 }
 
@@ -138,7 +189,8 @@ function renderBarometerChart(name, timeframe) {
                 borderWidth: 1.5,
                 pointRadius: 0,
                 tension: 0.1,
-                fill: false
+                fill: false,
+                spanGaps: true
             }]
         },
         options: {
@@ -205,9 +257,10 @@ function buildMasterCheckboxes() {
  */
 function toPercentChange(prices) {
     if (!prices || prices.length === 0) return [];
-    const base = prices[0];
-    if (base === 0) return prices.map(() => 0);
-    return prices.map(p => parseFloat(((p - base) / base * 100).toFixed(3)));
+    // Find the first valid (non-null, non-zero) price to use as baseline
+    const base = prices.find(p => p !== null && p !== undefined && p !== 0);
+    if (!base) return prices.map(() => 0);
+    return prices.map(p => (p === null || p === undefined) ? null : parseFloat(((p - base) / base * 100).toFixed(3)));
 }
 
 function updateMasterChart() {
@@ -223,32 +276,52 @@ function updateMasterChart() {
 
     masterRawPrices = {}; // reset raw price lookup
 
-    const datasets = checked.map((name) => {
+    // 1. Extract all raw datasets for the selected timeframe
+    const rawDatasets = checked.map(name => {
         const dataset = commodityData[name];
         const sliced = sliceByTimeframe(dataset.labels, dataset.prices, activeMasterTimeframe);
+        return { name, labels: sliced.labels, prices: sliced.prices };
+    });
 
-        // Store raw prices keyed by date for tooltip access
-        masterRawPrices[name] = {};
-        sliced.labels.forEach((d, i) => { masterRawPrices[name][d] = sliced.prices[i]; });
+    // 2. Create a unified MASTER labels (dates) array
+    const allDates = new Set();
+    rawDatasets.forEach(rd => rd.labels.forEach(d => allDates.add(d)));
+    const masterLabels = Array.from(allDates).sort();
 
-        // Normalize to percentage change from start of timeframe window
-        const pctData = toPercentChange(sliced.prices);
+    // 3. Align each dataset to the master labels with null padding
+    const datasets = rawDatasets.map((rd) => {
+        const { name, labels, prices } = rd;
+        const alignedPrices = [];
+        const datePriceMap = {};
+        labels.forEach((d, i) => { datePriceMap[d] = prices[i]; });
+
+        masterLabels.forEach(date => {
+            const p = datePriceMap[date];
+            alignedPrices.push(p !== undefined ? p : null);
+        });
+
+        // Store raw prices for tooltip access
+        masterRawPrices[name] = datePriceMap;
+
+        // Calculate % change relative to the first available valid price in THIS timeframe
+        const pctData = toPercentChange(alignedPrices);
 
         return {
             label: name,
-            data: pctData.map((p, idx) => ({ x: sliced.labels[idx], y: p })),
+            data: pctData.map((p, idx) => ({ x: masterLabels[idx], y: p })),
             borderColor: CHART_COLORS[Object.keys(commodityData).indexOf(name) % CHART_COLORS.length],
             borderWidth: 1.5,
             pointRadius: 0,
             tension: 0.1,
-            fill: false
+            fill: false,
+            spanGaps: true
         };
     });
 
     const ctx = document.getElementById('master-canvas').getContext('2d');
     masterChart = new Chart(ctx, {
         type: 'line',
-        data: { datasets },
+        data: { labels: masterLabels, datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -294,7 +367,371 @@ function updateMasterChart() {
 }
 
 // ============================================================
-// 5. TAB NAVIGATION
+// 5. LIVE NEWS ENGINE — Fetch and render news
+// ============================================================
+async function fetchLiveNews() {
+    try {
+        const response = await fetch('live_news.json');
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        const news = await response.json();
+        renderLiveNews(news);
+    } catch (err) {
+        console.error('Failed to load live_news.json:', err);
+        const errorMsg = '<div class="news-item">Error loading news feed.</div>';
+        const gFeed = document.getElementById('global-news-feed');
+        const mFeed = document.getElementById('macro-news-full');
+        if (gFeed) gFeed.innerHTML = errorMsg;
+        if (mFeed) mFeed.innerHTML = errorMsg;
+    }
+}
+
+function renderLiveNews(newsItems) {
+    const globalContainer = document.getElementById('global-news-feed');
+    const macroContainer = document.getElementById('macro-news-full');
+
+    const renderToContainer = (container, items) => {
+        if (!container) return;
+        container.innerHTML = '';
+        if (items.length === 0) {
+            container.innerHTML = '<div class="news-item">No news available.</div>';
+            return;
+        }
+
+        items.forEach((item) => {
+            const newsItem = document.createElement('div');
+            newsItem.className = 'news-item';
+            
+            let timeStr = "";
+            try {
+                const date = new Date(item.published_at);
+                timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+            } catch (e) {
+                timeStr = "--:--";
+            }
+
+            const highImpactKeywords = ['CRASH', 'WAR', 'FED', 'INFLATION', 'SELL-OFF', 'RATE', 'TREASURY'];
+            const headline = item.headline.toUpperCase();
+            const isHighImpact = highImpactKeywords.some(kw => headline.includes(kw));
+            const impactBadge = isHighImpact ? '<span class="impact-badge" style="margin-right: 10px;">HIGH IMPACT</span>' : '';
+
+            newsItem.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="news-time">${timeStr}</span>
+                    ${impactBadge}
+                </div>
+                <a href="${item.link}" target="_blank">${headline}</a>
+            `;
+            container.appendChild(newsItem);
+        });
+    };
+
+    // Global Feed (Overview): limit to 7
+    renderToContainer(globalContainer, newsItems.slice(0, 7));
+    
+    // Macro Feed (Deep Dive): show all 50
+    renderToContainer(macroContainer, newsItems);
+}
+
+// ============================================================
+// 6. HISTORICAL IMPACT ENGINE
+// ============================================================
+function buildMacroEventList() {
+    const container = document.getElementById('event-list-container');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    macroEvents.forEach((ev, idx) => {
+        const btn = document.createElement('div');
+        btn.className = 'event-btn';
+        btn.textContent = `${ev.date} | ${ev.name}`;
+        btn.onclick = () => handleEventSelection(idx);
+        container.appendChild(btn);
+    });
+}
+
+function resetToToday() {
+    activeEventIdx = null;
+    activeCustomRange = null;
+    
+    // Clear active states in list
+    document.querySelectorAll('.event-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('today-btn').classList.add('active');
+    
+    // Reset Q2 Chart to 1Y View
+    updateMasterChart(); // Will use default range (1Y)
+    
+    // Update Q3 & Q4 for "Today"
+    calculateSectorSnapshot(); 
+    calculateImpactMetrics(null); // Passing null for 'Today'
+}
+
+function handleEventSelection(idx) {
+    activeEventIdx = idx;
+    const event = macroEvents[idx];
+    const eventDate = new Date(event.date);
+
+    // Update UI highlights
+    document.querySelectorAll('.event-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === idx);
+    });
+    document.getElementById('today-btn').classList.remove('active');
+
+    // 1. Set Custom Range: 7 days before to 30 days after
+    const start = new Date(eventDate); start.setDate(start.getDate() - 7);
+    const end = new Date(eventDate); end.setDate(end.getDate() + 30);
+    activeCustomRange = { start, end };
+
+    // Update charts instantly
+    updateMasterChart();
+    if (activeBarometerTicker) {
+        renderBarometerChart(activeBarometerTicker, activeBarometerTimeframe);
+    }
+
+    // 2. Calculate Impacts
+    setTimeout(() => {
+        calculateImpactMetrics(event.date);
+        calculateSectorBacktest(event.date);
+    }, 100);
+}
+
+// (Sector Data is now loaded in initTerminal)
+
+function calculateSectorBacktest(targetDateStr) {
+    if (!sectorData || Object.keys(sectorData).length === 0) return;
+
+    const sectorContainer = document.getElementById('sector-flow-container');
+    if (!sectorContainer) return;
+
+    const eventDate = new Date(targetDateStr);
+    const endWindow = new Date(eventDate);
+    endWindow.setDate(endWindow.getDate() + 30);
+
+    const results = [];
+
+    Object.entries(sectorData).forEach(([ticker, data]) => {
+        // data is [{x: "YYYY-MM-DD", y: price}, ...]
+        const tIdx = data.findIndex(d => new Date(d.x) >= eventDate);
+        if (tIdx === -1) return;
+
+        const pT = data[tIdx].y;
+        
+        // Find price closest to T+30
+        const t30Idx = data.findLastIndex(d => new Date(d.x) <= endWindow);
+        if (t30Idx === -1 || t30Idx <= tIdx) return;
+
+        const pT30 = data[t30Idx].y;
+        const change = ((pT30 - pT) / pT * 100).toFixed(2);
+        
+        results.push({
+            ticker,
+            change: parseFloat(change),
+            formatted: (change >= 0 ? '+' : '') + change + '%'
+        });
+    });
+
+    // 1. Render Sectors in FIXED order
+    sectorContainer.innerHTML = '';
+    
+    Object.entries(SECTOR_MAP).forEach(([ticker, displayName], i) => {
+        const sectorRaw = sectorData[ticker];
+        if (!sectorRaw) return;
+
+        const tIdx = sectorRaw.findIndex(d => new Date(d.x) >= eventDate);
+        if (tIdx === -1) return;
+
+        const pT = sectorRaw[tIdx].y;
+        
+        // 1D Change
+        let d1Markup = "N/A";
+        if (sectorRaw[tIdx + 1]) {
+            const pct = ((sectorRaw[tIdx+1].y - pT) / pT * 100).toFixed(2);
+            d1Markup = `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct}%</span>`;
+        }
+
+        // 1W Change (T+5)
+        let w1Markup = "N/A";
+        if (sectorRaw[tIdx + 5]) {
+            const pct = ((sectorRaw[tIdx+5].y - pT) / pT * 100);
+            w1Markup = `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct.toFixed(2)}%</span>`;
+        }
+        
+        // 1M Change (T+30 approx)
+        const t30Idx = sectorRaw.findLastIndex(d => new Date(d.x) <= endWindow);
+        let m1Markup = "N/A";
+        if (t30Idx !== -1 && t30Idx > tIdx) {
+            const pct = ((sectorRaw[t30Idx].y - pT) / pT * 100);
+            m1Markup = `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct.toFixed(2)}%</span>`;
+        }
+
+        const row = document.createElement('div');
+        row.className = 'metric-row';
+        row.style.fontSize = "0.9rem";
+        row.style.padding = "4px 10px";
+        row.innerHTML = `
+            <span class="metric-label" style="width: 170px; flex-shrink: 0;">${displayName}</span>
+            <span style="width: 110px; flex-shrink: 0;">1D: ${d1Markup}</span>
+            <span style="width: 110px; flex-shrink: 0;">1W: ${w1Markup}</span>
+            <span style="width: 110px; flex-shrink: 0;">1M: ${m1Markup}</span>
+        `;
+        sectorContainer.appendChild(row);
+    });
+
+    // 2. Add Separator and Commodities (Gold & Oil)
+    const separator = document.createElement('div');
+    separator.style = "border-top: 1px solid #333; margin: 8px 0; padding-top: 8px; font-size: 0.7rem; color: #444; padding-left: 10px; letter-spacing: 1px;";
+    separator.textContent = "COMMODITY IMPACT";
+    sectorContainer.appendChild(separator);
+
+    const commoditiesToTrack = ['Gold', 'WTI Crude'];
+    commoditiesToTrack.forEach(name => {
+        const dataset = commodityData[name];
+        if (!dataset) return;
+
+        const allDates = dataset.labels;
+        const prices = dataset.prices;
+        const tIdx = allDates.findIndex(d => new Date(d) >= eventDate);
+        if (tIdx === -1) return;
+
+        const pT = prices[tIdx];
+        
+        const calcImpact = (offset) => {
+            if (!prices[tIdx + offset]) return "N/A";
+            const pct = ((prices[tIdx + offset] - pT) / pT * 100);
+            return `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct.toFixed(2)}%</span>`;
+        };
+
+        const row = document.createElement('div');
+        row.className = 'metric-row';
+        row.innerHTML = `
+            <span class="metric-label" style="width: 170px; flex-shrink: 0; color: var(--amber);">${name.toUpperCase()}</span>
+            <span style="width: 110px; flex-shrink: 0;">1D: ${calcImpact(1)}</span>
+            <span style="width: 110px; flex-shrink: 0;">1W: ${calcImpact(5)}</span>
+            <span style="width: 110px; flex-shrink: 0;">1M: ${calcImpact(22)}</span>
+        `;
+        sectorContainer.appendChild(row);
+    });
+}
+
+function calculateSectorSnapshot() {
+    // Shows "Today's" Trailing 1D, 1W, 1M for Sectors + Commodities
+    const sectorContainer = document.getElementById('sector-flow-container');
+    if (!sectorContainer) return;
+    sectorContainer.innerHTML = '';
+
+    Object.entries(SECTOR_MAP).forEach(([ticker, displayName]) => {
+        const data = sectorData[ticker];
+        if (!data || data.length < 30) return;
+
+        const pT = data[data.length - 1].y;
+        const p1D = data[data.length - 2].y;
+        const p1W = data[data.length - 6].y;
+        const p1M = data[data.length - 23].y;
+
+        const calc = (cur, old) => {
+            const pct = ((cur - old) / old * 100);
+            return `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct.toFixed(2)}%</span>`;
+        };
+
+        const row = document.createElement('div');
+        row.className = 'metric-row';
+        row.innerHTML = `
+            <span class="metric-label" style="width: 170px; flex-shrink: 0;">${displayName}</span>
+            <span style="width: 110px; flex-shrink: 0;">1D: ${calc(pT, p1D)}</span>
+            <span style="width: 110px; flex-shrink: 0;">1W: ${calc(pT, p1W)}</span>
+            <span style="width: 110px; flex-shrink: 0;">1M: ${calc(pT, p1M)}</span>
+        `;
+        sectorContainer.appendChild(row);
+    });
+
+    const separator = document.createElement('div');
+    separator.style = "border-top: 1px solid #333; margin: 8px 0; padding-top: 8px; font-size: 0.7rem; color: #444; padding-left: 10px; letter-spacing: 1px;";
+    separator.textContent = "COMMODITY METRICS";
+    sectorContainer.appendChild(separator);
+
+    ['Gold', 'WTI Crude'].forEach(name => {
+        const dataset = commodityData[name];
+        if (!dataset) return;
+        const prices = dataset.prices;
+        const pT = prices[prices.length - 1];
+        
+        const calc = (cur, old) => {
+            if (!old) return "N/A";
+            const pct = ((cur - old) / old * 100);
+            return `<span style="color:${pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pct.toFixed(2)}%</span>`;
+        };
+
+        const row = document.createElement('div');
+        row.className = 'metric-row';
+        row.innerHTML = `
+            <span class="metric-label" style="width: 170px; flex-shrink: 0; color: var(--amber);">${name.toUpperCase()}</span>
+            <span style="width: 110px; flex-shrink: 0;">1D: ${calc(pT, prices[prices.length-2])}</span>
+            <span style="width: 110px; flex-shrink: 0;">1W: ${calc(pT, prices[prices.length-6])}</span>
+            <span style="width: 110px; flex-shrink: 0;">1M: ${calc(pT, prices[prices.length-23])}</span>
+        `;
+        sectorContainer.appendChild(row);
+    });
+}
+
+function calculateImpactMetrics(targetDateStr) {
+    const container = document.getElementById('impact-metrics-container');
+    container.innerHTML = '';
+    
+    if (!targetDateStr) {
+        container.innerHTML = '<p class="placeholder" style="margin-top:20px;">TODAY\'S MARKET SNAPSHOT ACTIVE.<br>SELECT HISTORICAL EVENT TO VIEW BACKTEST WINNERS.</p>';
+        return;
+    }
+
+    const allCommodities = Object.entries(commodityData);
+    const eventDateStr = targetDateStr;
+    const allDates = Array.from(new Set(Object.values(commodityData).flatMap(d => d.labels))).sort();
+    const tIdx = allDates.findIndex(d => d >= eventDateStr);
+    
+    if (tIdx === -1) return;
+
+    const impacts = [];
+
+    allCommodities.forEach(([name, dataset]) => {
+        const datePriceMap = {};
+        dataset.labels.forEach((d, i) => { datePriceMap[d] = dataset.prices[i]; });
+
+        const pT = datePriceMap[allDates[tIdx]];
+        const pT1 = datePriceMap[allDates[tIdx + 1]];
+        const pT7 = datePriceMap[allDates[tIdx + 5]];
+
+        if (pT != null && pT7 != null) {
+            const w1Change = ((pT7 - pT) / pT * 100);
+            const d1Change = pT1 != null ? ((pT1 - pT) / pT * 100) : null;
+            impacts.push({ name, w1Change, d1Change });
+        }
+    });
+
+    if (impacts.length === 0) return;
+
+    impacts.sort((a, b) => b.w1Change - a.w1Change);
+    const winner = impacts[0];
+    const loser = impacts[impacts.length - 1];
+
+    const renderBox = (data, type) => {
+        const sign = data.w1Change >= 0 ? '+' : '';
+        const color = data.w1Change >= 0 ? 'var(--green)' : 'var(--red)';
+        const label = type === 'winner' ? 'TOP PERFORMER' : 'MAX DRAWDOWN';
+        return `
+            <div class="wl-box ${type}">
+                <span class="wl-label">${label}</span>
+                <span class="wl-name" style="color:${color}">${data.name.toUpperCase()}</span>
+                <span class="wl-stats">1W RETURN: ${sign}${data.w1Change.toFixed(2)}%</span>
+            </div>
+        `;
+    };
+
+    const wlContainer = document.createElement('div');
+    wlContainer.className = 'wl-container';
+    wlContainer.innerHTML = renderBox(winner, 'winner') + renderBox(loser, 'loser');
+    container.appendChild(wlContainer);
+}
+
+// ============================================================
+// 7. TAB NAVIGATION
 // ============================================================
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
@@ -307,4 +744,4 @@ function switchTab(tabId) {
 // ============================================================
 // 6. INIT — Load data when page is ready
 // ============================================================
-document.addEventListener('DOMContentLoaded', loadCommodityData);
+document.addEventListener('DOMContentLoaded', initTerminal);
