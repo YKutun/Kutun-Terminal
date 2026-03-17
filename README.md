@@ -1,4 +1,5 @@
 KUTUN TERMINAL | Geopolitical Macro & Equity Intelligence Terminal
+
 A high-performance financial intelligence platform designed to quantify capital market cash flows and asset volatility following geopolitical conflicts and macro shocks.
 
 
