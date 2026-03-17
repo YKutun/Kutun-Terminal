@@ -40,9 +40,18 @@ def fetch_sector_historical_data():
 
 def export_macro_events():
     events = [
-        {"name": "2008 Lehman Brothers Collapse", "date": "2008-09-15", "description": "Lehman Brothers filed for bankruptcy, escalating the global financial crisis."},
-        {"name": "COVID-19 Market Crash", "date": "2020-02-20", "description": "Global stock markets began a sharp drop due to the spread of COVID-19."},
-        {"name": "Russia-Ukraine Invasion", "date": "2022-02-24", "description": "Russia launched an invasion of Ukraine, causing energy and commodity volatility."}
+        {"name": "2008 Lehman Brothers Collapse", "date": "2008-09-15", "description": "Lehman Brothers files for Chapter 11 bankruptcy, triggering a global liquidity crisis and a massive sell-off across global equities."},
+        {"name": "Fukushima Earthquake & Tsunami", "date": "2011-03-11", "description": "A massive earthquake and tsunami hit Japan, causing a nuclear disaster that violently disrupted global supply chains and energy markets."},
+        {"name": "US Credit Rating Downgrade", "date": "2011-08-05", "description": "Standard & Poor's downgrades the US federal government's credit rating from AAA to AA+, triggering a violent global stock market sell-off."},
+        {"name": "OPEC US Shale Price War", "date": "2014-11-27", "description": "OPEC unexpectedly refuses to cut oil production to drive US shale producers out of business, initiating a historic crash in crude prices."},
+        {"name": "Brexit Referendum", "date": "2016-06-23", "description": "The UK unexpectedly votes to leave the European Union, causing historic volatility in the British Pound and European banking sectors."},
+        {"name": "US-China Trade War Begins", "date": "2018-03-22", "description": "The US announces massive tariffs on Chinese goods, sparking retaliatory tariffs that heavily impact global tech, manufacturing, and agriculture."},
+        {"name": "COVID-19 Market Crash", "date": "2020-02-20", "description": "Global stock markets begin a severe, rapid crash as the reality of pandemic lockdowns and supply chain halts sets in."},
+        {"name": "Russia Invades Ukraine", "date": "2022-02-24", "description": "Russia launches a full-scale invasion of Ukraine, triggering massive spikes in global energy (oil/gas) and agricultural commodity prices."},
+        {"name": "Silicon Valley Bank Collapse", "date": "2023-03-10", "description": "SVB fails after a bank run driven by the rapid rise in interest rates, briefly threatening regional banking contagion."},
+        {"name": "Israel-Hamas War Begins", "date": "2023-10-07", "description": "Hamas launches a major attack on Israel, triggering a massive regional conflict and escalating geopolitical risk premiums across Middle Eastern markets."},
+        {"name": "Yen Carry Trade Flash Crash", "date": "2024-08-05", "description": "The Bank of Japan hikes interest rates, triggering a violent unwind of the global Yen carry trade and a massive one-day global equity flash crash."},
+        {"name": "US-Israel Strikes on Iran", "date": "2026-02-28", "description": "The US and Israel launch coordinated military strikes on Iranian infrastructure, sparking immediate surges in oil prices and widespread market volatility."}
     ]
     try:
         with open("macro_events.json", "w") as f:

@@ -16,7 +16,9 @@ let activeCustomRange = null; // { start: Date, end: Date } for event snapping
 // Data stores
 let macroEvents = [];
 let sectorData = {};
+let equityData = {}; // New global for Equity Terminal
 let activeEventIdx = null; // Track currently selected historical event
+let activeEquityTicker = null; // Currently selected stock in Equity Terminal
 
 // Sector Mapping Dictionary
 const SECTOR_MAP = {
@@ -29,6 +31,7 @@ const SECTOR_MAP = {
 // Chart instances (kept so we can destroy and re-create cleanly)
 let barometerChart = null;
 let masterChart = null;
+let equityChart = null; // New global for Equity Chart
 
 // ============================================================
 /// ============================================================
@@ -50,17 +53,19 @@ async function initTerminal() {
             }
         };
 
-        const [commodRes, eventRes, sectorRes, newsRes] = await Promise.all([
+        const [commodRes, eventRes, sectorRes, newsRes, equityRes] = await Promise.all([
             fetchSafe('commodities_data.json', {}),
             fetchSafe('macro_events.json', []),
             fetchSafe('sector_historical.json', {}),
-            fetchSafe('live_news.json', [])
+            fetchSafe('live_news.json', []),
+            fetchSafe('equity_data.json', {})
         ]);
 
         // 2. Apply Data
         commodityData = commodRes;
         macroEvents = eventRes;
         sectorData = sectorRes;
+        equityData = equityRes;
         const newsData = newsRes;
 
         // 3. Build UI components (Stateless/Data-driven)
@@ -68,6 +73,8 @@ async function initTerminal() {
         buildMasterCheckboxes();
         renderLiveNews(newsData);
         buildMacroEventList();
+        buildMacroArchive(); // New UI builder for Macro tab
+        buildEquityWatchlist(); // New UI builder
 
         // 4. Set Initial State (Today's Market)
         resetToToday();
@@ -449,6 +456,28 @@ function buildMacroEventList() {
     });
 }
 
+function buildMacroArchive() {
+    const container = document.getElementById('macro-archive-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    macroEvents.forEach((ev, idx) => {
+        const card = document.createElement('div');
+        card.className = 'macro-event-card';
+        
+        card.innerHTML = `
+            <div class="macro-event-header" onclick="this.parentElement.classList.toggle('expanded')">
+                <span class="macro-event-date">${ev.date}</span>
+                <span class="macro-event-title">${ev.name}</span>
+            </div>
+            <div class="macro-event-body">
+                ${ev.description}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
 function resetToToday() {
     activeEventIdx = null;
     activeCustomRange = null;
@@ -739,6 +768,194 @@ function switchTab(tabId) {
     document.getElementById(tabId).classList.add('active');
     const indexMap = { kutun: 0, macro: 1, equity: 2, valuation: 3, fx: 4, digital: 5, portfolio: 6 };
     document.querySelectorAll('.nav-item')[indexMap[tabId]]?.classList.add('active');
+
+    // Trigger default load for Equity Terminal if not already set
+    if (tabId === 'equity' && !activeEquityTicker && equityData['RY.TO']) {
+        selectEquityTicker('RY.TO');
+    }
+}
+
+// ============================================================
+// 8. EQUITY TERMINAL LOGIC
+// ============================================================
+let activeEquityRegion = 'ALL';
+let activeEquitySector = 'ALL';
+
+function setEquityRegion(region) {
+    activeEquityRegion = region;
+    ['all', 'us', 'can'].forEach(r => {
+        const btn = document.getElementById(`filter-region-${r}`);
+        if (btn) btn.classList.remove('active');
+    });
+    const activeBtn = document.getElementById(`filter-region-${region.toLowerCase()}`);
+    if (activeBtn) activeBtn.classList.add('active');
+    renderEquityWatchlist();
+}
+
+function setEquitySector(sector) {
+    activeEquitySector = sector;
+    renderEquityWatchlist();
+}
+
+function buildEquityWatchlist() {
+    // 1. Populate Sectors Dynamically
+    const sectorSelect = document.getElementById('filter-sector');
+    if (sectorSelect) {
+        const sectors = new Set();
+        Object.values(equityData).forEach(data => {
+            if (typeof data !== 'string' && data.metadata && data.metadata.sector && data.metadata.sector !== 'N/A') {
+                sectors.add(data.metadata.sector);
+            }
+        });
+        const sortedSectors = Array.from(sectors).sort();
+        sectorSelect.innerHTML = '<option value="ALL">All Sectors</option>';
+        sortedSectors.forEach(sec => {
+            const opt = document.createElement('option');
+            opt.value = sec;
+            opt.textContent = sec;
+            sectorSelect.appendChild(opt);
+        });
+    }
+
+    // 2. Render List Based on Filters
+    renderEquityWatchlist();
+}
+
+function renderEquityWatchlist() {
+    const container = document.getElementById('equity-watchlist');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const allTickers = Object.keys(equityData);
+    let filteredTickers = allTickers.filter(symbol => {
+        const data = equityData[symbol];
+        if (typeof data === 'string') return false; // skip error
+        
+        // Region Filter
+        const isCan = symbol.endsWith('.TO');
+        if (activeEquityRegion === 'US' && isCan) return false;
+        if (activeEquityRegion === 'CAN' && !isCan) return false;
+        
+        // Sector Filter
+        if (activeEquitySector !== 'ALL') {
+            if (data.metadata?.sector !== activeEquitySector) return false;
+        }
+        
+        return true;
+    });
+
+    if (filteredTickers.length === 0) {
+        container.innerHTML = '<div style="padding: 20px; color: #666; text-align: center;">No tickers match criteria.</div>';
+        return;
+    }
+
+    filteredTickers.forEach(symbol => {
+        const data = equityData[symbol];
+        const row = document.createElement('div');
+        row.className = 'watchlist-item';
+        if (symbol === activeEquityTicker) row.classList.add('active');
+        row.id = `watchlist-${symbol.replace('.', '-')}`;
+        row.onclick = () => selectEquityTicker(symbol);
+
+        const name = data.metadata?.longName || symbol;
+        
+        row.innerHTML = `
+            <span class="watchlist-ticker">${symbol}</span>
+            <span class="watchlist-name">${name}</span>
+        `;
+        container.appendChild(row);
+    });
+
+    // Handle Active Ticker falling outside of filters
+    if (activeEquityTicker && !filteredTickers.includes(activeEquityTicker)) {
+        selectEquityTicker(filteredTickers[0]);
+    } else if (!activeEquityTicker && filteredTickers.length > 0) {
+        selectEquityTicker(filteredTickers[0]);
+    }
+}
+
+function selectEquityTicker(symbol) {
+    activeEquityTicker = symbol;
+    const data = equityData[symbol];
+    if (!data || typeof data === 'string') return;
+
+    // 1. Update active state in UI
+    document.querySelectorAll('.watchlist-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(`watchlist-${symbol.replace('.', '-')}`)?.classList.add('active');
+
+    // 2. Update Header
+    document.getElementById('equity-main-ticker').textContent = symbol;
+    document.getElementById('equity-main-name').textContent = data.metadata.longName;
+
+    // 3. Update Summary & Stats
+    document.getElementById('equity-summary').textContent = data.metadata.longBusinessSummary;
+    
+    const format = (val, prefix = '$') => (val === 'N/A' || val == null) ? 'N/A' : `${prefix}${val.toLocaleString()}`;
+    const formatSmall = (val) => (val === 'N/A' || val == null) ? 'N/A' : val.toLocaleString();
+
+    document.getElementById('stat-price').textContent = format(data.metadata.currentPrice);
+    document.getElementById('stat-mcap').textContent = data.metadata.marketCap !== 'N/A' ? '$' + (data.metadata.marketCap / 1e12).toFixed(2) + 'T' : 'N/A';
+    document.getElementById('stat-pe').textContent = formatSmall(data.metadata.trailingPE);
+    document.getElementById('stat-sector').textContent = data.metadata.sector;
+    document.getElementById('stat-52h').textContent = format(data.metadata.fiftyTwoWeekHigh);
+    document.getElementById('stat-52l').textContent = format(data.metadata.fiftyTwoWeekLow);
+
+    // 4. Render Chart
+    renderEquityChart(symbol);
+}
+
+function renderEquityChart(symbol) {
+    const data = equityData[symbol];
+    if (!data || !data.historical_prices || data.historical_prices === 'N/A') return;
+
+    const labels = Object.keys(data.historical_prices);
+    const prices = Object.values(data.historical_prices);
+
+    if (equityChart) {
+        equityChart.destroy();
+    }
+
+    const ctx = document.getElementById('equity-canvas').getContext('2d');
+    equityChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Price',
+                data: prices,
+                borderColor: '#00ff00',
+                borderWidth: 1.5,
+                pointRadius: 0,
+                tension: 0,
+                fill: true,
+                backgroundColor: 'rgba(0, 255, 0, 0.05)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: ctx => `Price: $${ctx.parsed.y.toFixed(2)}`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: { color: '#666', maxTicksLimit: 12, font: { family: 'Roboto Mono', size: 10 } },
+                    grid: { color: '#1a1a1a' }
+                },
+                y: {
+                    ticks: { color: '#666', font: { family: 'Roboto Mono', size: 10 } },
+                    grid: { color: '#1a1a1a' }
+                }
+            }
+        }
+    });
 }
 
 // ============================================================

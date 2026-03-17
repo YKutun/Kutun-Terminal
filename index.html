@@ -40,8 +40,9 @@
             background: #0a0a0a;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            gap: 50px;
             padding: 0 20px;
             height: 50px;
             flex-shrink: 0;
@@ -339,10 +340,10 @@
         }
 
         /* ── CUSTOM SCROLLBAR (Neon Green) ── */
-        .news-wrap::-webkit-scrollbar, .impact-metrics::-webkit-scrollbar, #sector-flow-container::-webkit-scrollbar { width: 4px; }
-        .news-wrap::-webkit-scrollbar-track, .impact-metrics::-webkit-scrollbar-track, #sector-flow-container::-webkit-scrollbar-track { background: transparent; }
-        .news-wrap::-webkit-scrollbar-thumb, .impact-metrics::-webkit-scrollbar-thumb, #sector-flow-container::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-        .news-wrap::-webkit-scrollbar-thumb:hover, .impact-metrics::-webkit-scrollbar-thumb:hover, #sector-flow-container::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+        .news-wrap::-webkit-scrollbar, .impact-metrics::-webkit-scrollbar, #sector-flow-container::-webkit-scrollbar, .event-scroll-list::-webkit-scrollbar { width: 4px; }
+        .news-wrap::-webkit-scrollbar-track, .impact-metrics::-webkit-scrollbar-track, #sector-flow-container::-webkit-scrollbar-track, .event-scroll-list::-webkit-scrollbar-track { background: transparent; }
+        .news-wrap::-webkit-scrollbar-thumb, .impact-metrics::-webkit-scrollbar-thumb, #sector-flow-container::-webkit-scrollbar-thumb, .event-scroll-list::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        .news-wrap::-webkit-scrollbar-thumb:hover, .impact-metrics::-webkit-scrollbar-thumb:hover, #sector-flow-container::-webkit-scrollbar-thumb:hover, .event-scroll-list::-webkit-scrollbar-thumb:hover { background: var(--green); }
 
         /* ── NO ANIMATIONS ── */
         .news-item, .metric-row, .impact-card {
@@ -412,21 +413,229 @@
         }
         #master-canvas { width: 100% !important; height: 100% !important; }
 
-        /* ── OTHER PLACEHOLDER TABS ── */
-        .ph-tab h2 {
-            color: var(--amber);
-            font-size: 1rem;
-            border-bottom: 1px solid var(--amber);
-            display: inline-block;
-            padding-bottom: 5px;
-            margin-bottom: 18px;
+        /* ── MACRO & GEOPOLITICS TAB ── */
+        .macro-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+            overflow: hidden;
         }
-        .ph-box {
-            border: 1px dashed #2a2a2a;
-            padding: 40px;
-            text-align: center;
-            color: #333;
-            font-size: 0.82rem;
+        .macro-column {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .macro-col-header {
+            padding: 12px 15px;
+            background: #111;
+            border-bottom: 1px solid var(--border);
+            color: var(--amber);
+            font-size: 0.85rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .macro-content-scroll {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        /* Historical Event Cards */
+        .macro-event-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .macro-event-card:hover { border-color: var(--amber); }
+        .macro-event-header {
+            padding: 12px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .macro-event-date { color: var(--amber); font-size: 0.7rem; font-family: var(--font); }
+        .macro-event-title { color: #fff; font-size: 0.9rem; font-weight: bold; }
+        
+        .macro-event-body {
+            padding: 0 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+            background: #111;
+            font-size: 0.8rem;
+            color: #aaa;
+            line-height: 1.5;
+            border-top: 1px solid transparent;
+        }
+        .macro-event-card.expanded .macro-event-body {
+            max-height: 200px;
+            padding: 12px;
+            border-top: 1px solid #333;
+        }
+
+        /* ── EQUITY TERMINAL ── */
+        .equity-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr 320px;
+            grid-template-rows: 1fr;
+            gap: 12px;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        /* Watchlist Sidebar */
+        .equity-sidebar {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-header {
+            padding: 10px 15px;
+            background: #111;
+            border-bottom: 1px solid var(--border);
+            color: var(--amber);
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .watchlist-filters {
+            padding: 10px 15px;
+            background: #0a0a0a;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .filter-group { display: flex; gap: 5px; }
+        .filter-btn {
+            background: #111;
+            border: 1px solid var(--border);
+            color: #666;
+            font-family: var(--font);
+            font-size: 0.65rem;
+            padding: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            border-radius: 3px;
+        }
+        .filter-btn:hover { color: var(--text); border-color: #555; }
+        .filter-btn.active { color: var(--green); border-color: var(--green); color: var(--green); font-weight: bold; }
+        .filter-select {
+            width: 100%;
+            background: #111;
+            border: 1px solid var(--border);
+            color: #ccc;
+            font-family: var(--font);
+            font-size: 0.70rem;
+            padding: 5px;
+            outline: none;
+            border-radius: 3px;
+        }
+        .filter-select:focus { border-color: var(--green); color: var(--green); }
+        .watchlist-scroll {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 5px;
+        }
+        .watchlist-item {
+            padding: 8px 12px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            transition: all 0.2s;
+            color: #ccc;
+        }
+        .watchlist-item:hover { background: #1a1a1a; color: #fff; }
+        .watchlist-item.active { 
+            background: rgba(0, 209, 255, 0.1); 
+            color: var(--blue);
+            border: 1px solid rgba(0, 209, 255, 0.2);
+        }
+        .watchlist-ticker { font-weight: bold; }
+        .watchlist-name { color: #666; font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+
+        /* Main Chart Area */
+        .equity-main {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            min-width: 0;
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 15px;
+        }
+        #equity-main-ticker { font-size: 1.5rem; font-weight: bold; color: var(--blue); margin-right: 10px; }
+        #equity-main-name { font-size: 0.9rem; color: #888; }
+        .equity-canvas-wrap { flex-grow: 1; position: relative; min-height: 0; }
+
+        /* Company Info Panel */
+        .equity-info {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        .info-section-title {
+            color: var(--amber);
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .business-summary {
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        .equity-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .stat-card {
+            background: #080808;
+            border: 1px solid #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .stat-label { font-size: 0.6rem; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; }
+        .stat-value { font-size: 0.85rem; font-weight: bold; color: var(--text); }
+        .stat-value.highlight { color: var(--green); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .equity-layout { grid-template-columns: 200px 1fr; grid-template-rows: 1fr auto; }
+            .equity-info { grid-column: span 2; }
+            .macro-layout { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
         }
 
         /* Responsive */
@@ -544,14 +753,27 @@
     <!-- ════════════════════════════════════════
          TAB 2: MACRO & GEOPOLITICS
     ════════════════════════════════════════ -->
-    <div id="macro" class="tab-content ph-tab">
-        <div class="master-section">
-            <div class="quad-header" style="margin-bottom:12px;">
-                <span>MACRO & GEOPOLITICS — GLOBAL INTELLIGENCE</span>
-                <span class="flash">● LIVE FEED</span>
+    <div id="macro" class="tab-content">
+        <div class="macro-layout">
+            <!-- Left Column: Live News -->
+            <div class="macro-column">
+                <div class="macro-col-header">
+                    <span>EXPANDED LIVE NEWS FEED</span>
+                    <span class="flash">● LIVE</span>
+                </div>
+                <div class="macro-content-scroll news-wrap" id="macro-news-full">
+                    <div class="news-item">Loading live headlines...</div>
+                </div>
             </div>
-            <div class="news-wrap" id="macro-news-full" style="border: 1px solid var(--border); background: #080808; border-radius: 4px; overflow-y: auto; height: 600px;">
-                <div class="news-item">Loading macro intelligence...</div>
+
+            <!-- Right Column: Historical Archive -->
+            <div class="macro-column">
+                <div class="macro-col-header">
+                    <span>HISTORICAL EVENT ARCHIVE</span>
+                </div>
+                <div class="macro-content-scroll" id="macro-archive-container">
+                    <div style="padding: 20px; color: #444; font-size: 0.8rem; text-align: center;">Loading historical events...</div>
+                </div>
             </div>
         </div>
     </div>
@@ -559,9 +781,77 @@
     <!-- ════════════════════════════════════════
          TAB 3: EQUITY TERMINAL
     ════════════════════════════════════════ -->
-    <div id="equity" class="tab-content ph-tab">
-        <h2>EQUITY TERMINAL</h2>
-        <div class="ph-box">[ TICKER SEARCH, FUNDAMENTAL GRID &amp; PRICING CHARTS — IN DEVELOPMENT ]</div>
+    <div id="equity" class="tab-content">
+        <div class="equity-layout">
+            <!-- Sidebar: Watchlist -->
+            <div class="equity-sidebar">
+                <div class="sidebar-header">EQUITY WATCHLIST</div>
+                <div class="watchlist-filters">
+                    <div class="filter-group">
+                        <button class="filter-btn active" id="filter-region-all" onclick="setEquityRegion('ALL')">ALL</button>
+                        <button class="filter-btn" id="filter-region-us" onclick="setEquityRegion('US')">US</button>
+                        <button class="filter-btn" id="filter-region-can" onclick="setEquityRegion('CAN')">CAN</button>
+                    </div>
+                    <select class="filter-select" id="filter-sector" onchange="setEquitySector(this.value)">
+                        <option value="ALL">All Sectors</option>
+                    </select>
+                </div>
+                <div class="watchlist-scroll" id="equity-watchlist">
+                    <!-- Tickers injected here -->
+                    <div style="padding: 20px; color: #444; font-size: 0.7rem;">Loading available tickers...</div>
+                </div>
+            </div>
+
+            <!-- Main: Chart -->
+            <div class="equity-main">
+                <div class="chart-header">
+                    <div>
+                        <span id="equity-main-ticker">---</span>
+                        <span id="equity-main-name">Select Ticker</span>
+                    </div>
+                    <div style="color: #444; font-size: 0.7rem;">1-YEAR HISTORICAL DAILY</div>
+                </div>
+                <div class="equity-canvas-wrap">
+                    <canvas id="equity-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- Right: Info & Stats -->
+            <div class="equity-info">
+                <div class="info-section-title">Company Overview</div>
+                <div class="business-summary" id="equity-summary">
+                    Select a company from the watchlist to view its business profile and fundamental metrics.
+                </div>
+
+                <div class="info-section-title">Fundamental Data</div>
+                <div class="equity-stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Current Price</span>
+                        <span class="stat-value highlight" id="stat-price">$ ---</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Market Cap</span>
+                        <span class="stat-value" id="stat-mcap">---</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">P/E Ratio</span>
+                        <span class="stat-value" id="stat-pe">---</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Sector</span>
+                        <span class="stat-value" id="stat-sector">---</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">52W High</span>
+                        <span class="stat-value" style="color:var(--blue)" id="stat-52h">$ ---</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">52W Low</span>
+                        <span class="stat-value" style="color:var(--amber)" id="stat-52l">$ ---</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- ════════════════════════════════════════
