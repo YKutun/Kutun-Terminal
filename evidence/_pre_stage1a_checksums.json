@@ -1,0 +1,34 @@
+{
+  "index.html": {
+    "sha256": "cb9302e967c3a987e4d5cf2e2bb6a58ce080c0189e0c79fd190451d1afb19204",
+    "bytes": 36950
+  },
+  "app.js": {
+    "sha256": "d19c5b143fe395a33f2713f3142415b8bac10379f9752afecd6f61ff9dcc9715",
+    "bytes": 37167
+  },
+  "commodities_data.json": {
+    "sha256": "d1beda347eca8f0d6292da61e951ce6957892ea61a53574b60d89acf89b662eb",
+    "bytes": 2396365
+  },
+  "sector_historical.json": {
+    "sha256": "e9649245860cb4638e04a983d651201b354df1b1e4ccad7543f56a968db20247",
+    "bytes": 4392627
+  },
+  "equity_data.json": {
+    "sha256": "ffd0825bd4991973b706d11e44e4e414b4769662960ae7ce3f0ee6bd4871e99c",
+    "bytes": 557869
+  },
+  "live_news.json": {
+    "sha256": "11170e8477084e6e48e943f5f67051e80c0297b0908d2c09a1fe36ac4bb65826",
+    "bytes": 483
+  },
+  "macro_events.json": {
+    "sha256": "aa4370c194c84a6564350adfb4faf1c97e7a6006ec128b0abd17d7be6ef58456",
+    "bytes": 3010
+  },
+  "README.md": {
+    "sha256": "69a1ae64417aa8dde018890504babc5c64b99df28c5f53fddc16375d4125ac89",
+    "bytes": 2143
+  }
+}

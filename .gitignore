@@ -1,0 +1,15 @@
+# Regenerable caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# Transient write leftovers (not datasets or evidence)
+*.tmp

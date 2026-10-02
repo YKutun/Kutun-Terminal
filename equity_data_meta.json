@@ -1,0 +1,227 @@
+{
+    "source": "repair_equity_data.py (Stage 1B \u00e2\u20ac\u201d one-shot NaN repair; no network requests)",
+    "methodology_version": "stage1b_repair_v1",
+    "utc_retrieval_timestamp": "unknown \u00e2\u20ac\u201d original retrieval time not recorded",
+    "utc_repair_timestamp": "2026-09-21T02:33:18.271078+00:00",
+    "notes": [
+        "Original equity_data.json contained 50 bare NaN values (one per affected ticker, all on date 2026-09-18).",
+        "Those observations were removed. All other historical prices and metadata were preserved.",
+        "This file records the state after repair, not after a live data refresh.",
+        "Run equity_engine.py (hardened version) to perform a live refresh."
+    ],
+    "original_ticker_count": 61,
+    "recovered_ticker_count": 61,
+    "excluded_ticker_count": 0,
+    "removed_invalid_obs_count": 50,
+    "earliest_valid_date": "2025-09-18",
+    "latest_valid_date": "2026-09-18",
+    "excluded_tickers": [],
+    "refresh_warnings": {
+        "AAPL": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "MSFT": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "NVDA": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "AMZN": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "META": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "GOOGL": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "BRK-B": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "LLY": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "AVGO": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "V": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "JPM": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "TSLA": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "WMT": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "UNH": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "MA": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "PG": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "JNJ": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "HD": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "MRK": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "ORCL": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "CVX": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "COST": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "ABBV": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "BAC": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "PEP": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "KO": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "NFLX": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "CRM": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "AMD": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "LIN": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "TMO": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "MCD": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "DIS": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "CSCO": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "INTC": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "ABT": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "WFC": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "QCOM": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "IBM": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "CAT": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "VZ": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "AMAT": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "UBER": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "PFE": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "GS": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "TXN": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "NOW": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "GE": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "ISRG": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ],
+        "MS": [
+            "removed obs 2026-09-18: price=None is not finite",
+            "removed 1 invalid price observations"
+        ]
+    },
+    "counts": {
+        "refreshed": 0,
+        "fallback": 0,
+        "excluded": 0,
+        "total": 61
+    }
+}

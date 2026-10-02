@@ -1,0 +1,627 @@
+{
+  "schema": "commodities_meta_v1",
+  "collector": "commodity_tracker.py",
+  "collector_version": "stage2b_v1",
+  "dataset_file": "commodities_data.json",
+  "dataset_sha256": "5c255bb2f469a9c91c2f79db8fccfc3c2ae1fece9de0697cd0d26aa18c602da3",
+  "dataset_replaced_by_this_attempt": true,
+  "atomicity_note": "Dataset and sidecar are written as two separate atomic file replacements, not one transaction. Compare dataset_sha256 with the dataset (py commodity_tracker.py --verify).",
+  "provider": "yfinance (Yahoo Finance)",
+  "request": {
+    "start": "2005-01-01",
+    "end": "2026-10-01",
+    "end_convention": "passed to the provider as given",
+    "interval": "not passed (provider default)",
+    "auto_adjust": "explicit: False",
+    "price_field_rule": "explicit: 'Close'",
+    "download_options": {
+      "auto_adjust": false,
+      "price_field": "Close"
+    },
+    "timeout_seconds": 30,
+    "as_of_utc_date": "2026-10-01"
+  },
+  "dependencies": {
+    "python": "3.12.1",
+    "yfinance": "1.2.0",
+    "pandas": "3.0.1",
+    "numpy": "2.4.3"
+  },
+  "last_attempt": {
+    "started_utc": "2026-10-01T02:58:14.066489+00:00",
+    "completed_utc": "2026-10-01T02:58:21.132681+00:00",
+    "outcome": "partial",
+    "exit_status": 2,
+    "batch_error": null,
+    "dataset_error": null,
+    "counts": {
+      "requested": 14,
+      "refreshed": 13,
+      "retained": 1,
+      "unavailable": 0
+    }
+  },
+  "historical_provenance": "unknown for any record not listed as refreshed with a last_successful_refresh_utc by a sidecar-writing run; no provider, symbol, price field, adjustment or time is attributed to older records",
+  "instruments": {
+    "Gold": {
+      "symbol": "GC=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 12,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 12,
+        "reordered": false,
+        "usable_observations": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "12 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5455,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Silver": {
+      "symbol": "SI=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 12,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 12,
+        "reordered": false,
+        "usable_observations": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "12 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5455,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Platinum": {
+      "symbol": "PL=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 570,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 570,
+        "reordered": false,
+        "usable_observations": 4908,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "570 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 4908,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 4897,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Palladium": {
+      "symbol": "PA=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 455,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 455,
+        "reordered": false,
+        "usable_observations": 5023,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "455 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5023,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5012,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Copper": {
+      "symbol": "HG=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 9,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 9,
+        "reordered": false,
+        "usable_observations": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "9 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5458,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Soybeans": {
+      "symbol": "ZS=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 7,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 7,
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "7 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5460,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Brent Crude": {
+      "symbol": "BZ=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 706,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 706,
+        "reordered": false,
+        "usable_observations": 4772,
+        "first": "2007-07-30",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "706 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 4772,
+        "first": "2007-07-30",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 4761,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "WTI Crude": {
+      "symbol": "CL=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 9,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 9,
+        "reordered": false,
+        "usable_observations": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 1,
+        "warnings": [
+          "9 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5458,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Natural Gas": {
+      "symbol": "NG=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 8,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 8,
+        "reordered": false,
+        "usable_observations": 5470,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "8 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5470,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5459,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Cocoa": {
+      "symbol": "CC=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 13,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 13,
+        "reordered": false,
+        "usable_observations": 5465,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "13 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5465,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5454,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Lumber": {
+      "symbol": "LBS=F",
+      "status": "retained",
+      "reasons": [
+        "response rejected: no usable observations (5478 row(s) removed: nan=5478)"
+      ],
+      "price_field": null,
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 5478,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 5478,
+        "reordered": false,
+        "usable_observations": 0,
+        "first": null,
+        "last": null,
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 1,
+        "first": "2023-04-10",
+        "last": "2023-04-10"
+      },
+      "revisions": null,
+      "last_successful_refresh_utc": null,
+      "last_successful_refresh_known": false
+    },
+    "Sugar": {
+      "symbol": "SB=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 12,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 12,
+        "reordered": false,
+        "usable_observations": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "12 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5466,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5455,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Corn": {
+      "symbol": "ZC=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 9,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 9,
+        "reordered": false,
+        "usable_observations": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "9 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5469,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5458,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    },
+    "Wheat": {
+      "symbol": "ZW=F",
+      "status": "refreshed",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5478,
+        "removed_rows": {
+          "null": 0,
+          "nan": 7,
+          "infinite": 0,
+          "non_numeric": 0
+        },
+        "removed_total": 7,
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-09-30",
+        "zero_prices": 0,
+        "negative_prices": 0,
+        "warnings": [
+          "7 row(s) removed for invalid prices"
+        ],
+        "price_field": "Close"
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-09-30"
+      },
+      "revisions": {
+        "shared_dates": 5460,
+        "revised_dates": 0,
+        "first_revised": null,
+        "last_revised": null,
+        "max_abs_change": null,
+        "max_rel_change": null,
+        "cause": "not inferred"
+      },
+      "last_successful_refresh_utc": "2026-10-01T02:58:14.066489+00:00",
+      "last_successful_refresh_known": true
+    }
+  }
+}
