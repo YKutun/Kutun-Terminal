@@ -1,0 +1,989 @@
+{
+  "schema": "sectors_meta_v1",
+  "collector": "sector_tracker.py",
+  "collector_version": "stage2d1_v1",
+  "dataset_file": "sector_historical.json",
+  "dataset_sha256": "eea9890432bc8ea3547f824378ea3e3b722dfe59dfe28270c14caa3e505a3345",
+  "dataset_replaced_by_this_attempt": true,
+  "atomicity_note": "Dataset and sidecar are written as two separate atomic file replacements, not one transaction. Compare dataset_sha256 with the dataset (py sector_tracker.py --verify --output-dir DIR).",
+  "provider": "yfinance (Yahoo Finance)",
+  "request": {
+    "start": "2005-01-01",
+    "end": "2026-10-02",
+    "end_convention": "passed to the provider as given; not assumed inclusive",
+    "interval": "1d",
+    "auto_adjust": "explicit: False",
+    "price_field": "explicit: 'Close'",
+    "download_options": {
+      "interval": "1d",
+      "auto_adjust": false,
+      "price_field": "Close"
+    },
+    "timeout_seconds": null,
+    "as_of_utc_date": "2026-10-02",
+    "symbols": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU",
+      "XLB",
+      "XLRE",
+      "XLC"
+    ],
+    "collector_configured_timeout_seconds": 30,
+    "timeout_forwarded": false,
+    "timeout_note": "The collector is configured for a 30 s timeout but this retrieval did NOT forward it: the Stage 2D2 recording driver wrapped yf.download and hid its signature, so the provider library default (10 s) applied. Corrected at promotion; the staged sidecar had recorded 30."
+  },
+  "price_definition": {
+    "description": "Unadjusted provider Close (price return CANDIDATE configuration), rounded to 2 decimals.",
+    "interval": "1d",
+    "auto_adjust": "explicit: False",
+    "price_field": "explicit: 'Close'",
+    "not_claimed": [
+      "dividend-inclusive total return",
+      "equivalence with the unknown settings that produced the historical production file",
+      "independently verified provider split/adjustment treatment",
+      "that a first returned observation is the ETF's inception date"
+    ]
+  },
+  "fill_policy": "none: no forward fill, backward fill, interpolation, zero substitution or common start date",
+  "dependencies": {
+    "python": "3.12.1",
+    "yfinance": "1.2.0",
+    "pandas": "3.0.1",
+    "numpy": "2.4.3"
+  },
+  "last_attempt": {
+    "started_utc": "2026-10-02T02:37:21.211795+00:00",
+    "completed_utc": "2026-10-02T02:37:29.135541+00:00",
+    "outcome": "success",
+    "exit_status": 0,
+    "batch_error": null,
+    "dataset_error": null,
+    "counts": {
+      "requested": 11,
+      "refreshed": 11,
+      "retained": 0,
+      "unavailable": 0
+    }
+  },
+  "review": {
+    "required_before_production_use": true,
+    "instruments": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU",
+      "XLB",
+      "XLRE",
+      "XLC"
+    ]
+  },
+  "historical_provenance": "unknown for any record not listed as refreshed with a last_successful_refresh_utc by a sidecar-writing run; no provider, symbol, price field, adjustment or time is attributed to older or retained records",
+  "instruments": {
+    "XLK": {
+      "symbol": "XLK",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 3.1099999999999994,
+          "max_rel_change": 0.3047989623865111,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 3.1099999999999994); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLF": {
+      "symbol": "XLF",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 9.600000000000001,
+          "max_rel_change": 0.523719165085389,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 9.600000000000001); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLV": {
+      "symbol": "XLV",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 12.380000000000003,
+          "max_rel_change": 0.42734635540733695,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 12.380000000000003); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLE": {
+      "symbol": "XLE",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 19.29,
+          "max_rel_change": 0.8161993769470401,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 19.29); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLI": {
+      "symbol": "XLI",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 12.600000000000001,
+          "max_rel_change": 0.4939817043813193,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 12.600000000000001); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLY": {
+      "symbol": "XLY",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 4.419999999999995,
+          "max_rel_change": 0.29812734082396997,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 4.419999999999995); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLP": {
+      "symbol": "XLP",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 12.79,
+          "max_rel_change": 0.7277486910994766,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 12.79); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLU": {
+      "symbol": "XLU",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 10.490000000000002,
+          "max_rel_change": 1.0650636492220649,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 10.490000000000002); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLB": {
+      "symbol": "XLB",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 0,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 0,
+        "removed_position": {
+          "leading": 0,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "price_field": "Close",
+        "warnings": []
+      },
+      "coverage": {
+        "records": 5471,
+        "first": "2005-01-03",
+        "last": "2026-10-01",
+        "max_gap_days": 5,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 1
+        },
+        "dates_lost": {
+          "count": 0,
+          "first": null,
+          "last": null,
+          "before_candidate_first": 0,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": false,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 5332,
+          "revised_dates": 5276,
+          "first_revised": "2005-01-03",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 7.380000000000001,
+          "max_rel_change": 0.5845511482254697,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "5276 shared date(s) have different prices (max abs 7.380000000000001); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLRE": {
+      "symbol": "XLRE",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 2710,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 2710,
+        "removed_position": {
+          "leading": 2710,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 2761,
+        "first": "2015-10-08",
+        "last": "2026-10-01",
+        "max_gap_days": 4,
+        "price_field": "Close",
+        "warnings": [
+          "2710 row(s) removed, none filled (leading 2710, internal 0, trailing 0); leading/trailing removals are expected for a late-starting ETF or multi-symbol alignment"
+        ]
+      },
+      "coverage": {
+        "records": 2761,
+        "first": "2015-10-08",
+        "last": "2026-10-01",
+        "max_gap_days": 4,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 2711
+        },
+        "dates_lost": {
+          "count": 2710,
+          "first": "2005-01-03",
+          "last": "2015-10-07",
+          "before_candidate_first": 2710,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [
+            {
+              "first": "2005-01-03",
+              "last": "2015-10-07",
+              "count": 2710
+            }
+          ],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": true,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 2622,
+          "revised_dates": 2566,
+          "first_revised": "2015-10-08",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 9.68,
+          "max_rel_change": 0.42630820931349034,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "candidate does not contain 2710 prior date(s) (first 2005-01-03, last 2015-10-07; 2710 before the candidate start, 0 inside its range, 0 after its end); prior records may include fabricated fill - review before any production use",
+        "candidate starts later (2015-10-08) than prior history (2005-01-03)",
+        "2566 shared date(s) have different prices (max abs 9.68); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    },
+    "XLC": {
+      "symbol": "XLC",
+      "status": "refreshed",
+      "provenance": "refreshed_this_attempt",
+      "reasons": [],
+      "price_field": "Close",
+      "attempt": {
+        "rows_received": 5471,
+        "removed_rows": {
+          "null": 0,
+          "nan": 3388,
+          "infinite": 0,
+          "non_numeric": 0,
+          "non_positive": 0
+        },
+        "removed_total": 3388,
+        "removed_position": {
+          "leading": 3388,
+          "internal": 0,
+          "trailing": 0
+        },
+        "reordered": false,
+        "usable_observations": 2083,
+        "first": "2018-06-19",
+        "last": "2026-10-01",
+        "max_gap_days": 4,
+        "price_field": "Close",
+        "warnings": [
+          "3388 row(s) removed, none filled (leading 3388, internal 0, trailing 0); leading/trailing removals are expected for a late-starting ETF or multi-symbol alignment"
+        ]
+      },
+      "coverage": {
+        "records": 2083,
+        "first": "2018-06-19",
+        "last": "2026-10-01",
+        "max_gap_days": 4,
+        "leading_identical_run": 1
+      },
+      "comparison_with_prior": {
+        "prior": {
+          "records": 5332,
+          "first": "2005-01-03",
+          "last": "2026-03-13",
+          "leading_identical_run": 3389
+        },
+        "dates_lost": {
+          "count": 3388,
+          "first": "2005-01-03",
+          "last": "2018-06-18",
+          "before_candidate_first": 3388,
+          "inside_candidate_range": 0,
+          "after_candidate_last": 0,
+          "runs": [
+            {
+              "first": "2005-01-03",
+              "last": "2018-06-18",
+              "count": 3388
+            }
+          ],
+          "runs_truncated": false
+        },
+        "dates_added": {
+          "count": 139,
+          "first": "2026-03-16",
+          "last": "2026-10-01"
+        },
+        "starts_later": true,
+        "ends_earlier": false,
+        "revisions": {
+          "shared_dates": 1944,
+          "revised_dates": 1888,
+          "first_revised": "2018-06-19",
+          "last_revised": "2025-12-19",
+          "max_abs_change": 3.8400000000000034,
+          "max_rel_change": 0.07516691794098647,
+          "cause": "not inferred"
+        }
+      },
+      "review_required": true,
+      "review_reasons": [
+        "candidate does not contain 3388 prior date(s) (first 2005-01-03, last 2018-06-18; 3388 before the candidate start, 0 inside its range, 0 after its end); prior records may include fabricated fill - review before any production use",
+        "candidate starts later (2018-06-19) than prior history (2005-01-03)",
+        "1888 shared date(s) have different prices (max abs 3.8400000000000034); cause not inferred"
+      ],
+      "last_successful_refresh_utc": "2026-10-02T02:37:21.211795+00:00",
+      "last_successful_refresh_known": true
+    }
+  },
+  "metadata_correction": {
+    "corrected_utc": "2026-10-02T03:19:51.945859+00:00",
+    "field": "request.timeout_seconds",
+    "staged_value": 30,
+    "corrected_value": null,
+    "reason": "staged metadata stated the collector's configured timeout as if it had been passed to the provider",
+    "original_staged_sidecar": "staging_stage2d2_20261002_023649\\sector_historical_meta.json",
+    "original_staged_sidecar_sha256": "AAF31C4BBD86BB553D69142643204236E84B665112ACE99BB43E717245421164",
+    "dataset_unchanged_by_correction": true,
+    "retrieval_not_repeated": true
+  },
+  "promotion": {
+    "promoted_utc": "2026-10-02T03:19:51.945859+00:00",
+    "retrieval_utc": "2026-10-02T02:37:21.211795+00:00",
+    "retrieval_and_promotion_are_separate_times": true,
+    "source_staging_directory": "staging_stage2d2_20261002_023649",
+    "source_dataset_sha256": "EEA9890432BC8EA3547F824378EA3E3B722DFE59DFE28270C14CAA3E505A3345",
+    "legacy_production_dataset_sha256": "E9649245860CB4638E04A983D651201B354DF1B1E4CCAD7543F56A968DB20247",
+    "legacy_production_backup": "archive\\pre_stage2d3_sector_promotion_20261002_031826\\sector_historical.json",
+    "approved_decisions": {
+      "D1": "Use the reviewed provider Close series requested with auto_adjust=False for sector price-return display; returns exclude distributions and are not total returns.",
+      "D2": "Remove the 2,710 XLRE and 3,388 XLC pre-listing records by replacing those series with their reviewed candidates."
+    },
+    "display_definition": "Sector ETF price returns use provider Close and exclude distributions. Data before each ETF's available history is unavailable.",
+    "latest_observation": "2026-10-01 is provider-reported; completion of that exchange session is not verified",
+    "corporate_action_treatment": "not independently verified",
+    "stage2d2_review": "staging_stage2d2_20261002_023649\\STAGE2D2_CANDIDATE_REVIEW.md (review flags in 'review' and per-instrument records are retained as evidence)",
+    "provenance_of_replaced_history": "the legacy production series (not carried forward) had unknown settings and, for XLRE/XLC, back-filled leading values"
+  }
+}

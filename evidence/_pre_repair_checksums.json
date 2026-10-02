@@ -1,0 +1,10 @@
+{
+  "commodities_data.json": "d1beda347eca8f0d6292da61e951ce6957892ea61a53574b60d89acf89b662eb",
+  "sector_historical.json": "e9649245860cb4638e04a983d651201b354df1b1e4ccad7543f56a968db20247",
+  "equity_data.json": "ffd0825bd4991973b706d11e44e4e414b4769662960ae7ce3f0ee6bd4871e99c",
+  "live_news.json": "11170e8477084e6e48e943f5f67051e80c0297b0908d2c09a1fe36ac4bb65826",
+  "macro_events.json": "aa4370c194c84a6564350adfb4faf1c97e7a6006ec128b0abd17d7be6ef58456",
+  "financial_data.csv": "2a64edf5749b8d4b94dae16ffdbed364e20b628699a8c8261b5a5c5d35d8f273",
+  "aapl_income_stmt.csv": "1e9ab02d8bb5f863e4696701c42943e56b8f5bfc3f60dcd720cfdd6d4fd83e19",
+  "aapl_balance_sheet.csv": "a045b19a90f73b7b5db0d481dcdab46ee59fae521235d674d86d8acdd1f40ec2"
+}

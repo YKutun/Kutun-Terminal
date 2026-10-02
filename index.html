@@ -281,10 +281,26 @@
             text-shadow: 0 0 8px rgba(255, 140, 0, 0.4);
             box-shadow: inset 0 0 10px rgba(255, 140, 0, 0.1);
         }
-        .today-reset-btn:hover { 
-            background: rgba(255, 140, 0, 0.1); 
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.3), inset 0 0 15px rgba(255, 140, 0, 0.2);
-            color: #ffaa44;
+        .today-reset-btn.active { 
+            background: rgba(255, 140, 0, 0.2); 
+            box-shadow: 0 0 12px rgba(255, 140, 0, 0.4), inset 0 0 10px rgba(255, 140, 0, 0.2);
+        }
+
+        .fx-event-dropdown {
+            background: #0d0d0d;
+            border: 1px solid var(--border);
+            color: var(--amber);
+            font-family: var(--font);
+            font-size: 0.72rem;
+            padding: 4px 8px;
+            outline: none;
+            cursor: pointer;
+            border-radius: 3px;
+            max-width: 380px;
+            transition: border-color 0.2s;
+        }
+        .fx-event-dropdown:focus {
+            border-color: var(--green);
         }
 
         .event-scroll-list {
@@ -642,6 +658,74 @@
         @media (max-width: 900px) {
             .home-grid { grid-template-columns: 1fr; grid-template-rows: repeat(4, 280px); overflow-y: auto; }
         }
+
+        /* ── DATA STATUS PANEL ── */
+        #data-status-panel {
+            flex-shrink: 0;
+            background: #080808;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 5px 14px;
+            font-family: var(--font);
+            font-size: 0.65rem;
+            overflow-x: auto;
+        }
+        .ds-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 4px;
+        }
+        .ds-title {
+            color: var(--amber);
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 0.65rem;
+        }
+        .ds-subtitle {
+            color: #444;
+            font-size: 0.6rem;
+        }
+        .ds-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 1px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            white-space: nowrap;
+        }
+        .ds-row:last-child { border-bottom: none; }
+        .ds-icon { width: 12px; text-align: center; }
+        .ds-name {
+            width: 110px;
+            flex-shrink: 0;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+        .ds-badge {
+            width: 52px;
+            flex-shrink: 0;
+            font-size: 0.58rem;
+            padding: 1px 4px;
+            border-radius: 2px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .ds-badge.loaded  { background: rgba(0,255,0,0.08);  color: var(--green);  border: 1px solid rgba(0,255,0,0.2); }
+        .ds-badge.empty   { background: rgba(255,184,0,0.08); color: var(--amber);  border: 1px solid rgba(255,184,0,0.2); }
+        .ds-badge.failed  { background: rgba(255,76,76,0.08); color: var(--red);    border: 1px solid rgba(255,76,76,0.2); }
+        .ds-badge.invalid { background: rgba(255,76,76,0.08); color: var(--red);    border: 1px solid rgba(255,76,76,0.2); }
+        .ds-detail {
+            color: #555;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .ds-note {
+            color: #333;
+            font-size: 0.58rem;
+            flex-shrink: 0;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -660,6 +744,9 @@
     </div>
 </nav>
 
+<!-- ── DATA STATUS PANEL (visible on all tabs) ── -->
+<div id="data-status-panel">Initialising…</div>
+
 <main>
 
     <!-- ════════════════════════════════════════
@@ -672,11 +759,11 @@
             <div class="quadrant">
                 <div class="quad-header">
                     <span>GLOBAL NEWS FEED</span>
-                    <span class="flash">● LIVE</span>
+                    <span class="flash" style="color:#555" title="Static snapshot — not a live feed">● SNAPSHOT</span>
                 </div>
                 <div class="quad-body">
                     <div class="news-wrap" id="global-news-feed" style="overflow: hidden; padding-top: 0;">
-                        <div class="news-item" style="margin-top: 0;">Loading live headlines...</div>
+                        <div class="news-item" style="margin-top: 0;">Loading news snapshot…</div>
                     </div>
                 </div>
             </div>
@@ -705,7 +792,7 @@
                                 <button class="baro-tf-btn tf-btn" id="baro-tf-5Y"  onclick="setBarometerTimeframe('5Y')">5Y</button>
                                 <button class="baro-tf-btn tf-btn" id="baro-tf-MAX" onclick="setBarometerTimeframe('MAX')">MAX</button>
                             </div>
-                            <div class="barometer-canvas-wrap">
+                            <div class="barometer-canvas-wrap" id="barometer-canvas-wrap">
                                 <canvas id="barometer-canvas"></canvas>
                             </div>
                         </div>
@@ -713,19 +800,11 @@
                 </div>
             </div>
 
-            <!-- BOTTOM-LEFT: Sector Capital Flow -->
+            <!-- BOTTOM-LEFT: Sector Price Returns -->
             <div class="quadrant">
-                <div class="quad-header"><span>SECTOR CAPITAL FLOW</span></div>
+                <div class="quad-header"><span>SECTOR PRICE RETURNS</span></div>
                 <div class="quad-body" id="sector-flow-container" style="overflow-y:auto;">
-                    <div class="metric-row"><span class="metric-label">TECHNOLOGY</span><span class="up">+1.45%</span></div>
-                    <div class="metric-row"><span class="metric-label">ENERGY</span><span class="down">-0.82%</span></div>
-                    <div class="metric-row"><span class="metric-label">FINANCIALS</span><span class="up">+0.12%</span></div>
-                    <div class="metric-row"><span class="metric-label">HEALTHCARE</span><span class="down">-0.33%</span></div>
-                    <div class="metric-row"><span class="metric-label">CONSUMER DISC.</span><span class="up">+0.61%</span></div>
-                    <div class="metric-row"><span class="metric-label">INDUSTRIALS</span><span class="up">+0.28%</span></div>
-                    <div class="metric-row"><span class="metric-label">MATERIALS</span><span class="down">-0.15%</span></div>
-                    <div class="metric-row"><span class="metric-label">UTILITIES</span><span class="up">+0.08%</span></div>
-                    <p class="placeholder">[ VISUAL HEATMAP — IN DEVELOPMENT ]</p>
+                    <div style="padding:12px;color:#444;font-size:0.75rem;">Loading…</div>
                 </div>
             </div>
 
@@ -735,7 +814,7 @@
                 <div class="quad-body">
                     <div class="q4-layout">
                         <div class="q4-left">
-                            <div id="today-btn" class="today-reset-btn" onclick="resetToToday()">TODAY'S MARKET</div>
+                            <div id="today-btn" class="today-reset-btn" onclick="resetToToday()">LATEST SNAPSHOT</div>
                             <div class="event-scroll-list" id="event-list-container">
                                 <!-- Event buttons injected here -->
                             </div>
@@ -755,24 +834,25 @@
     ════════════════════════════════════════ -->
     <div id="macro" class="tab-content">
         <div class="macro-layout">
-            <!-- Left Column: Live News -->
+            <!-- Left Column: News Snapshot -->
             <div class="macro-column">
                 <div class="macro-col-header">
-                    <span>EXPANDED LIVE NEWS FEED</span>
-                    <span class="flash">● LIVE</span>
+                    <span>MACRO NEWS FEED</span>
+                    <span class="flash" style="color:#555" title="Static snapshot — not a live feed">● SNAPSHOT</span>
                 </div>
                 <div class="macro-content-scroll news-wrap" id="macro-news-full">
-                    <div class="news-item">Loading live headlines...</div>
+                    <div class="news-item">Loading news snapshot…</div>
                 </div>
             </div>
 
-            <!-- Right Column: Historical Archive -->
+            <!-- Right Column: Manually Curated Event Archive -->
             <div class="macro-column">
                 <div class="macro-col-header">
                     <span>HISTORICAL EVENT ARCHIVE</span>
+                    <span style="color:#444;font-size:0.65rem;font-weight:normal;">Manually curated · not a live feed</span>
                 </div>
                 <div class="macro-content-scroll" id="macro-archive-container">
-                    <div style="padding: 20px; color: #444; font-size: 0.8rem; text-align: center;">Loading historical events...</div>
+                    <div style="padding: 20px; color: #444; font-size: 0.8rem; text-align: center;">Loading…</div>
                 </div>
             </div>
         </div>
@@ -811,7 +891,7 @@
                     </div>
                     <div style="color: #444; font-size: 0.7rem;">1-YEAR HISTORICAL DAILY</div>
                 </div>
-                <div class="equity-canvas-wrap">
+                <div class="equity-canvas-wrap" id="equity-canvas-wrap">
                     <canvas id="equity-canvas"></canvas>
                 </div>
             </div>
@@ -826,7 +906,7 @@
                 <div class="info-section-title">Fundamental Data</div>
                 <div class="equity-stats-grid">
                     <div class="stat-card">
-                        <span class="stat-label">Current Price</span>
+                        <span class="stat-label">Snapshot Price</span>
                         <span class="stat-value highlight" id="stat-price">$ ---</span>
                     </div>
                     <div class="stat-card">
@@ -867,7 +947,16 @@
     ════════════════════════════════════════ -->
     <div id="fx" class="tab-content">
         <div class="master-section">
-            <h2>FX &amp; COMMODITIES — % CHANGE COMPARISON</h2>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
+                <h2 style="margin:0;">FX &amp; COMMODITIES — % CHANGE COMPARISON</h2>
+                <!-- Compact Historical Event Control for FX tab -->
+                <div class="fx-event-control" style="display:flex;align-items:center;gap:6px;">
+                    <span style="color:var(--amber);font-size:0.7rem;font-weight:700;letter-spacing:0.5px;">HISTORICAL EVENT:</span>
+                    <select id="fx-event-select" class="fx-event-dropdown" onchange="handleFxEventSelectChange(this.value)" aria-label="Select Historical Macro Event">
+                        <option value="snapshot">● LATEST SNAPSHOT</option>
+                    </select>
+                </div>
+            </div>
             <!-- Timeframe selector for master chart -->
             <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;">
                 <span style="color:#666;font-size:0.7rem;margin-right:8px;">TIMEFRAME:</span>
@@ -885,7 +974,7 @@
                 <span style="color:#444;font-size:0.8rem;">Loading commodities...</span>
             </div>
             <!-- Master chart -->
-            <div class="master-canvas-wrap">
+            <div class="master-canvas-wrap" id="master-canvas-wrap">
                 <canvas id="master-canvas"></canvas>
             </div>
         </div>
